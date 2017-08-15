@@ -1,0 +1,37 @@
+{
+	"name": "ludorum-game-colograph",
+	"description": "Colograph game implementation for Ludorum.",
+	"keywords": [
+		"board-game",
+		"board-game-framework",
+		"artificial-intelligence",
+		"artificial-players",
+		"javascript",
+		"graph-coloring"
+	],
+	"version": "0.1.0",
+	"author": {
+		"name": "Leonardo Val",
+		"email": "leonardo.val@creatartis.com"
+	},
+	"homepage": "http://creatartis.com",
+	"contributors": [],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/LeonardoVal/ludorum-game-colograph.js"
+	},
+	"main": "build/ludorum-game-colograph.min.js",
+	"files": [
+		"build",
+		"LICENSE.md"
+	],
+	"dependencies": {
+		"creatartis-base": "~0.1.7",
+		"ludorum": "~0.2.0",
+		"sermat": "~0.0.8"
+	},
+	"devDependencies": {
+		"creatartis-grunt": "~0.0.3"
+	}
+}
