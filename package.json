@@ -1,5 +1,5 @@
 {
-	"name": "ludorum-game-colograph",
+	"name": "@creatartis/ludorum-game-colograph",
 	"description": "Colograph game implementation for Ludorum.",
 	"keywords": [
 		"board-game",
@@ -32,6 +32,6 @@
 		"sermat": "~0.0.8"
 	},
 	"devDependencies": {
-		"creatartis-grunt": "~0.0.3"
+		"creatartis-grunt": "~0.0.4"
 	}
 }
