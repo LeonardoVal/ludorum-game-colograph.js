@@ -3,7 +3,7 @@
 
 [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
-Colograph board game implementation to use with game framework [Ludorum](http://github.com/LeonardoVal/ludorum.js). It supports loading with AMD (with [RequireJS](http://requirejs.org/)) or a script tag (sets `ludorum_gamepack` in the global namespace).
+Colograph board game implementation to use with game framework [Ludorum](http://github.com/LeonardoVal/ludorum.js). It supports loading with AMD (with [RequireJS](http://requirejs.org/)) or a script tag.
 
 ## License
 
