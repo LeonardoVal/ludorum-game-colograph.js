@@ -82,8 +82,8 @@ var Colograph = exports.Colograph = declare(Game, {
 	moves: function moves() {
 		var colours = this.colours,
 			uncoloured = [];
-		for (var i = 0; i < this.edges.length; i++) {
-			if (!this.colours.hasOwnProperty(i)) {
+		for (var i = 0, len = this.edges.length; i < len; i++) {
+			if (!colours.hasOwnProperty(i)) {
 				uncoloured.push(i);
 			}
 		}
@@ -96,12 +96,13 @@ var Colograph = exports.Colograph = declare(Game, {
 	next: function next(moves, haps, update) {
 		raiseIf(haps, 'Haps are not required (given ', haps, ')!');
 		var activePlayer = this.activePlayer(),
-			move = +moves[activePlayer] >> 0;
-		raiseIf(move < 0 || move >= this.colours.length,
+			move = moves[activePlayer] |0;
+		raiseIf(move < 0 || move >= this.edges.length,
 			'Invalid move: node ', move, ' does not exist in ', this, '.');
-		raiseIf(this.colours[move] >= 0,
+		raiseIf(this.colours.hasOwnProperty(move),
 			'Invalid move: node ', move, ' has already been coloured in ', this, '.');
-		var newColours = copy(obj(move, activePlayer), this.colours);
+		var newColours = Object.assign({}, this.colours);
+		newColours[move] = activePlayer;
 		this.edges[move].forEach(function (n2) { // Colour edges from the one coloured in this move.
 			if (newColours[n2] === activePlayer) {
 				newColours[move +','+ n2] = activePlayer;
@@ -120,7 +121,7 @@ var Colograph = exports.Colograph = declare(Game, {
 			scoreSameShape: this.scoreSameShape,
 			scoreDifferentShape: this.scoreDifferentShape
 		};
-		if (update) {
+		if (false) {
 			this.constructor(args);
 			return this;
 		} else {
@@ -185,8 +186,8 @@ var Colograph = exports.Colograph = declare(Game, {
 	'static randomGraph': function randomGraph(nodeCount, edgeCount, random) {
 		nodeCount = Math.max(2, +nodeCount >> 0);
 		edgeCount = Math.max(nodeCount - 1, +edgeCount >> 0);
-		var edges = basis.iterables.range(nodeCount - 1).map(function (i) {
-			return random.split(1, basis.iterables.range(i + 1, nodeCount).toArray());
+		var edges = Iterable.range(nodeCount - 1).map(function (i) {
+			return random.split(1, Iterable.range(i + 1, nodeCount).toArray());
 		}).toArray();
 		for (var n = edgeCount - (nodeCount - 1), pair, pair2; n > 0; n--) {
 			pair = random.choice(edges);
@@ -206,166 +207,22 @@ var Colograph = exports.Colograph = declare(Game, {
 
 	/** `randomGame(params)` will generates a random Colograph game with a random graph.
 	*/
-	'static randomGame': function randomGame(args) {
+	'static randomGame': function randomGame(params) {
 		params = base.initialize({}, params)
-			.object('random', { defaultValue: randomness.DEFAULT })
+			.object('random', { defaultValue: base.Randomness.DEFAULT })
 			.integer('nodeCount', { defaultValue: 8, coerce: true })
 			.integer('edgeCount', { defaultValue: 11, coerce: true })
 			.integer('shapeCount', { defaultValue: 4, coerce: true, minimum: 1, maximum: 4 })
+			.array('shapes', { defaultValue: ['circle', 'triangle', 'square', 'star'] })
 			.subject;
-		var SHAPES = ['circle', 'triangle', 'square', 'star'];
-		return new Colograph({
+		return new this({
 			edges: this.randomGraph(params.nodeCount, params.edgeCount, params.random),
 			shapes: params.random.randoms(params.nodeCount, 0, params.shapeCount).map(function (r) {
-				return SHAPES[r|0];
+				return params.shapes[r|0];
 			}),
 			scoreSameShape: 1
 		});
-	},
-
-	// ## Human interface based on KineticJS. ######################################################
-
-	/** This legacy code is an implementation of a UI for Colograph using
-	[KineticJS](http://kineticjs.com/). Not entirely compatible yet.
-	*/
-	'static KineticUI': declare(UserInterface, {
-		constructor: function KineticUI(args) {
-			UserInterface.call(this, args);
-			initialize(this, args)
-				.string("container", { defaultValue: "colograph-container" })
-				.object("Kinetic", { defaultValue: window.Kinetic })
-				.integer('canvasRadius', { defaultValue: NaN, coerce: true })
-				.integer('nodeRadius', { defaultValue: 15, coerce: true })
-				.array('playerColours', { defaultValue: ['red', 'blue'] });
-			if (isNaN(this.canvasRadius)) {
-				this.canvasRadius = (Math.min(screen.width, screen.height) * 0.6) >> 1;
-			}
-			var stage = this.stage = new Kinetic.Stage({
-					container: this.container,
-					width: this.canvasRadius * 2,
-					height: this.canvasRadius * 2
-				}),
-				layer = this.layer = new Kinetic.Layer({
-					clearBeforeDraw: true,
-					offsetX: -this.canvasRadius,
-					offsetY: -this.canvasRadius
-				}),
-				game = this.match.state();
-			stage.add(layer);
-			setInterval(stage.draw.bind(stage), 1000 / 30);
-			layer.destroyChildren();
-			this.edges = {};
-			this.nodes = {};
-			this.drawEdges(game);
-			this.drawNodes(game);
-		},
-
-		drawEdges: function drawEdges(game) {
-			var angle = 2 * Math.PI / game.edges.length,
-				radius = this.canvasRadius - this.nodeRadius * 2,
-				ui = this;
-			game.edges.forEach(function (n2s, n1) { // Create lines.
-				n2s.forEach(function (n2) {
-					var line = new ui.Kinetic.Line({
-						points: [radius * Math.cos(angle * n1), radius * Math.sin(angle * n1),
-								radius * Math.cos(angle * n2), radius * Math.sin(angle * n2)],
-						stroke: "black", strokeWidth: 2
-					});
-					ui.edges[n1+','+n2] = line;
-					ui.layer.add(line);
-				});
-			});
-		},
-
-		drawNodes: function drawNodes(game) {
-			var angle = 2 * Math.PI / game.edges.length,
-				radius = this.canvasRadius - this.nodeRadius * 2,
-				ui = this;
-			game.edges.forEach(function (adjs, n) {
-				var shape,
-					x = radius * Math.cos(angle * n),
-					y = radius * Math.sin(angle * n);
-				switch (game.shapes[n]) {
-					case 'square':
-						shape = ui.drawSquare(x, y, ui.nodeRadius, n); break;
-					case 'triangle':
-						shape = ui.drawTriangle(x, y, ui.nodeRadius, n); break;
-					case 'star':
-						shape = ui.drawStar(x, y, ui.nodeRadius, n); break;
-					default:
-						shape = ui.drawCircle(x, y, ui.nodeRadius, n);
-				}
-				shape.on('mouseover', function () {
-					shape.setScale(1.2);
-				});
-				shape.on('mouseout', function () {
-					shape.setScale(1);
-				});
-				shape.on('click tap', function () {
-					ui.perform(n);
-				});
-				shape.setRotation(Math.random() * 2 * Math.PI);//FIXME
-				ui.nodes[n] = shape;
-				ui.layer.add(shape);
-			});
-		},
-
-		drawCircle: function drawCircle(x, y, r, n) {
-			return new this.Kinetic.Circle({
-				x: x, y: y, radius: r,
-				fill: "white", stroke: "black", strokeWidth: 2
-			});
-		},
-
-		drawSquare: function drawSquare(x, y, r, n) {
-			return new this.Kinetic.Rect({
-				x: x, y: y, width: r * 2, height: r * 2,
-				offsetX: r, offsetY: r,
-				fill: "white", stroke: "black", strokeWidth: 2
-			});
-		},
-
-		drawStar: function drawStar(x, y, r, n) {
-			return new Kinetic.Star({ numPoints: 5,
-				x: x, y: y, innerRadius: r * 0.6, outerRadius: r * 1.5,
-				fill: 'white', stroke: 'black', strokeWidth: 2
-			});
-		},
-
-		drawTriangle: function drawTriangle(x, y, r, n) {
-			return new Kinetic.RegularPolygon({ sides: 3,
-				x: x, y: y, radius: r * 1.25,
-				fill: 'white', stroke: 'black', strokeWidth: 2
-			});
-		},
-
-		display: function display(game) {
-			this.updateEdges(game);
-			this.updateNodes(game);
-		},
-
-		updateEdges: function updateEdges(game) {
-			var ui = this;
-			game.edges.forEach(function (n2s, n1) {
-				n2s.forEach(function (n2) {
-					var k = n1+','+n2;
-					ui.edges[k].setStroke(game.colours[k] || "black");
-				});
-			});
-		},
-
-		updateNodes: function updateNodes(game) {
-			var ui = this;
-			game.edges.forEach(function (adjs, n) {
-				var colour = game.colours[n];
-				if (colour) {
-					ui.nodes[n].setFill(colour);
-					ui.nodes[n].off('mouseover mouseout click tap');
-				}
-			});
-		}
-	}) // KineticJSCircleUI.
-
+	}
 }); // declare Colograph.
 
 /** Adding Mancala to `ludorum.games`.
