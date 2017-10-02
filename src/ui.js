@@ -13,7 +13,8 @@ Colograph.prototype.circularArrangement = function circularArrangement(radius) {
 	radius = radius || 200;
 	var angle = 2 * Math.PI / this.edges.length;
 	return this.edges.map(function (adjs, n) {
-		return [radius * Math.cos(angle * n), radius * Math.sin(angle * n)];
+		return [Math.round(radius * Math.cos(angle * n)),
+			Math.round(radius * Math.sin(angle * n))];
 	});
 };
 
@@ -38,7 +39,7 @@ var SVG = exports.SVG = {
 Colograph.prototype.toSVG = function toSVG(width, height, positions) {
 	width = width || 500;
 	height = height || 500;
-	positions = positions || this.circularArrangement(Math.max(width, height) / 3);
+	positions = positions || this.circularArrangement(Math.max(width, height) / 2.5);
 	var svg = [SVG.HEADER,
 		'<svg height="'+ height +'px" width="'+ width +'px" version="1.1"',
 		'\txmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
@@ -54,28 +55,35 @@ Colograph.prototype.toSVG = function toSVG(width, height, positions) {
 			'\t\t.'+ colour +'-edge { stroke:'+ colour +'; stroke-width:2px }'
 		);
 	});
-	svg.push('\t]]></style>\n');
-	svg.push('\t<defs>\n'); // Shape library.
+	svg.push('\t]]></style>');
+	svg.push('\t<defs>'); // Shape library.
 	for (var shape in SVG.SHAPES) {
 		svg.push('\t\t'+ SVG.SHAPES[shape]);
 	}
-	svg.push('\t</defs>\n');
+	svg.push('\t</defs>',
+		'\t<g id="colograph" transform="translate('+ (width/2) +','+ (height/2) +')">');
+	var colours = this.colours;
 	this.edges.forEach(function (n2s, n1) { // Draw edges.
 		var pos1 = positions[n1];
 		n2s.forEach(function (n2) {
-			var pos2 = positions[n2];
-			svg.push('\t<line class="blank-arc" data-edge="'+ JSON.stringify([pos1,pos2]) +
+			var pos2 = positions[n2],
+				colour = colours[n1 +','+ n2],
+				cssClass = colour ? colour.toLowerCase() +'-edge' : 'blank-edge';
+			svg.push('\t<line class="'+ cssClass +'" data-edge="'+ JSON.stringify([pos1,pos2]) +
 				'" x1="'+ pos1[0] +'" y1="'+ pos1[1] +
 				'" x2="'+ pos2[0] +'" y2="'+ pos2[1] +'"/>');
 		});
 	});
 	var shapes = this.shapes;
 	this.edges.forEach(function (adjs, n) { // Draw nodes.
-		var pos = positions[n];
+		var pos = positions[n],
+			colour = colours[n],
+			cssClass = colour ? colour.toLowerCase() +'-node' : 'blank-node';
 		svg.push('<use id="node'+ n +'" xlink:href="#'+ shapes[n] +'-node" '+
-			'transform="translate('+ pos.join(',') +')" class="blank-node"/>');
+			'transform="translate('+ pos.join(',') +')" class="'+ cssClass +'" '+
+			'data-ludorum-move="'+ n +'"/>');
 	});
-	svg.push('</svg>');
+	svg.push('\t</g>', '</svg>');
 	return svg.join('\n');
 }; // Colograph.toSVG
 

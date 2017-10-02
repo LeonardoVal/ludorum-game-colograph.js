@@ -121,7 +121,7 @@ var Colograph = exports.Colograph = declare(Game, {
 			scoreSameShape: this.scoreSameShape,
 			scoreDifferentShape: this.scoreDifferentShape
 		};
-		if (false) {
+		if (update) {
 			this.constructor(args);
 			return this;
 		} else {
