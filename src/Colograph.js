@@ -101,8 +101,7 @@ var Colograph = exports.Colograph = declare(Game, {
 			'Invalid move: node ', move, ' does not exist in ', this, '.');
 		raiseIf(this.colours.hasOwnProperty(move),
 			'Invalid move: node ', move, ' has already been coloured in ', this, '.');
-		var newColours = Object.assign({}, this.colours);
-		newColours[move] = activePlayer;
+		var newColours = Object.assign(obj(move, activePlayer), this.colours);
 		this.edges[move].forEach(function (n2) { // Colour edges from the one coloured in this move.
 			if (newColours[n2] === activePlayer) {
 				newColours[move +','+ n2] = activePlayer;
@@ -158,24 +157,6 @@ var Colograph = exports.Colograph = declare(Game, {
 			colour1 = this.colours[node1],
 			colour2 = this.colours[node2];
 		return connected && colour1 >= 0 && colour1 === colour2 ? colour1 : -1;
-	},
-
-	// ## Heuristics. ##############################################################################
-
-	/** `heuristics` is a namespace for heuristic evaluation functions to be used with artificial
-	intelligence methods such as Minimax.
-	*/
-	'static heuristics': {
-		/** + `scoreDifference(game, player)` is a simple heuristic that uses the current score.
-		*/
-		scoreDifference: function scoreDifference(game, player) {
-			var score = game.score(),
-				result = 0;
-			for (var p in score) {
-				result += p === player ? score[p] : -score[p];
-			}
-			return result / game.edges.length / 2;
-		}
 	},
 
 	// ## Graph generation. ########################################################################

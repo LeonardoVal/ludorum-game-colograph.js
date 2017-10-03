@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 	});
 
 	require('creatartis-grunt').config(grunt, {
-		sourceNames: ['__prologue__', 'Colograph', 'ui', '__epilogue__'],
+		sourceNames: ['__prologue__', 'Colograph', 'ui', 'ai', '__epilogue__'],
 		deps: [
 			{ id: 'creatartis-base', name: 'base' },
 			{ id: 'sermat', name: 'Sermat',
