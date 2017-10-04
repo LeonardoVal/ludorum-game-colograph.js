@@ -29,7 +29,7 @@
 	"dependencies": {
 		"creatartis-base": "~0.1.7",
 		"ludorum": "~0.2.1-alpha",
-		"sermat": "~0.0.8"
+		"sermat": "~0.0.9"
 	},
 	"devDependencies": {
 		"creatartis-grunt": "~0.0.8"
