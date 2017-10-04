@@ -42,7 +42,9 @@ function (base, Sermat, ludorum, ludorum_game_colograph, PlayTesterApp) {
 	);
 	APP.change = function change() {
 		try {
-			this.game = ludorum_game_colograph.Colograph.randomGame();
+			this.game = ludorum_game_colograph.Colograph.randomGame({
+				nodeCount: 15, edgeCount: 30
+			});
 			this.reset();
 		} catch (err) {
 			console.error(err);
@@ -50,7 +52,7 @@ function (base, Sermat, ludorum, ludorum_game_colograph, PlayTesterApp) {
 	};
 	APP.playerUI("You")
 		.playerRandom()
-		.playerMonteCarlo("", false, 10)
+		.playerMonteCarlo("", true, 10)
 		.playerMonteCarlo("", true, 100)
 		.playerUCT("", true, 10)
 		.playerUCT("", true, 100)
