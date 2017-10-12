@@ -1,4 +1,6 @@
-/** Package wrapper and layout.
+(function (init) { "use strict";
+			this["ludorum-game-colograph"] = init(this.base,this.Sermat,this.ludorum);
+		}).call(this,/** Package wrapper and layout.
 */
 function __init__(base, Sermat, ludorum) { "use strict";
 // Import synonyms. ////////////////////////////////////////////////////////////////////////////////
@@ -454,5 +456,5 @@ Colograph.heuristics = {
 // See __prologue__.js
 	return exports;
 }
-
-//# sourceMappingURL=ludorum-game-colograph-raw.js.map
+);
+//# sourceMappingURL=ludorum-game-colograph-tag.js.map
