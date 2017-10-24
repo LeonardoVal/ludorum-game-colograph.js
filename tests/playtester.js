@@ -1,10 +1,6 @@
-require(['creatartis-base', 'sermat', 'ludorum', 'ludorum-game-colograph', 'playtester'],
-function (base, Sermat, ludorum, ludorum_game_colograph, PlayTesterApp) {
-	window.base = base;
-	window.Sermat = Sermat;
-	window.ludorum = ludorum;
-	window.ludorum_game_colograph = ludorum_game_colograph;
-	window.PlayTesterApp = PlayTesterApp;
+require(['require-config'], function (init) { "use strict";
+init(['creatartis-base', 'sermat', 'ludorum', 'playtester', 'ludorum-game-colograph'],
+	function (base, Sermat, ludorum, PlayTesterApp, ludorum_game_colograph) {
 
 	var BasicHTMLInterface = ludorum.players.UserInterface.BasicHTMLInterface;
 
@@ -62,6 +58,5 @@ function (base, Sermat, ludorum, ludorum_game_colograph, PlayTesterApp) {
 		.button('resetButton', document.getElementById('reset'), APP.reset.bind(APP))
 		.button('changeButton', document.getElementById('change'), APP.change.bind(APP))
 		.change();
-}, function (err) {
-	console.error(err);
+}); // init()
 }); // require().
