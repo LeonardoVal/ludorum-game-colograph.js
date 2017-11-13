@@ -33,8 +33,8 @@ positions for every node in the game, follwing different criteria:
 			}
 			columns = Math.ceil(count / rows);
 		}
-		var rowHeight = height / rows,
-			colWidth = width / columns;
+		var rowHeight = height / (rows - 1),
+			colWidth = width / (columns - 1);
 		return this.edges.map(function (adjs, n) {
 			return [
 				(n % columns) * colWidth - width / 2,
