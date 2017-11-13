@@ -260,7 +260,7 @@ Object.assign(Colograph.prototype, {
 the board is going to be rendered properly. This _arrangement_ methods calculate an array of
 positions for every node in the game, follwing different criteria:
 
-+ `circularArrangement` puts all nodes in a circle of a given `radius`.
+	+ `circularArrangement` puts all nodes in a circle of a given `radius`.
 */
 	circularArrangement: function circularArrangement(radius) {
 		radius = radius || 200;
@@ -268,6 +268,29 @@ positions for every node in the game, follwing different criteria:
 		return this.edges.map(function (adjs, n) {
 			return [Math.round(radius * Math.cos(angle * n)),
 				Math.round(radius * Math.sin(angle * n))];
+		});
+	},
+
+/**	+ `gridArrangement` puts nodes in the vertices of a grid with given numbers of `rows` and
+	`columns`.
+ */
+ 	gridArrangement: function gridArrangement(height, width, rows, columns) {
+		height = height || 400;
+		width = width || 400;
+		var count = this.edges.length;
+		if (!columns) {
+			if (!rows) {
+				rows = Math.ceil(Math.sqrt(count));
+			}
+			columns = Math.ceil(count / rows);
+		}
+		var rowHeight = height / rows,
+			colWidth = width / columns;
+		return this.edges.map(function (adjs, n) {
+			return [
+				(n % columns) * colWidth - width / 2,
+				Math.floor(n / columns) * rowHeight - height / 2
+			];
 		});
 	},
 
@@ -400,7 +423,8 @@ and must have a size of 1.
 	toSVG: function toSVG(width, height, nodeSize, positions) {
 		width = width || 400;
 		height = height || 400;
-		positions = positions || this.circularArrangement(Math.max(width, height) / 2.5);
+		//positions = positions || this.circularArrangement(Math.max(width, height) / 2.5);
+		positions = positions || this.gridArrangement(width * 0.8, height * 0.8);
 		var game = this,
 			colours = this.colours,
 		 	svg = [
