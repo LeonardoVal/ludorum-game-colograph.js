@@ -206,7 +206,7 @@ var Colograph = exports.Colograph = declare(Game, {
 	}
 }); // declare Colograph.
 
-/** Adding Mancala to `ludorum.games`.
+/** Adding Colograph to `ludorum.games`.
 */
 ludorum.games.Colograph = Colograph;
 
