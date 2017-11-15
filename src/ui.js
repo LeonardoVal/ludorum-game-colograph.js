@@ -172,7 +172,7 @@ and must have a size of 1.
 	toSVG: function toSVG(width, height, nodeSize, positions) {
 		width = width || 400;
 		height = height || 400;
-		//positions = positions || this.circularArrangement(Math.max(width, height) / 2.5);
+		//positions = positions || this.circularArrangement(Math.max(width, height) / 2.4);
 		positions = positions || this.gridArrangement(width * 0.8, height * 0.8);
 		var game = this,
 			colours = this.colours,
