@@ -43,19 +43,22 @@ var GAME_01 = new ludorum_game_colograph.Colograph({ // Balanced
      }),
      GAME_03 = new ludorum_game_colograph.Colograph({ // ??
           edges:[
-               [10],[7,2],[6],[12,9],
-               [11,13],[11],[11],[8,10,13],
-               [13,9],[14,11,10],[12],[12],
-               [14],[14],[]
-          ],
-          shapes:["triangle","circle","circle","triangle","triangle","circle","circle","triangle",
-               "triangle","triangle","circle","triangle","circle","triangle","triangle"],
-          scoreSameShape: +1,
-          scoreDifferentShape: -1
+			[9],[6],[3,9],[7],
+			[5,8,10],[6,9,12],[8,11],[11],
+			[9,12,14],[13],[11,13,14],[14],
+			[],[],[],
+		],
+		shapes: ['circle','square','circle','circle',
+			 'square','circle','circle','circle',
+			 'square','square','square','square',
+			 'square','square','square'
+		],
+		scoreSameShape: +1,
+		scoreDifferentShape: -1
      });
 
 // Initialization //////////////////////////////////////////////////////////////////////////////////
-var game = GAME_03,
+var game = GAME_02,
      players = [
           //new ludorum.players.RandomPlayer({ name: 'Random' }),
           //new ludorum.players.MonteCarloPlayer({ name: 'MCTS(10)', simulationCount: 10, timeCap: Infinity }),
