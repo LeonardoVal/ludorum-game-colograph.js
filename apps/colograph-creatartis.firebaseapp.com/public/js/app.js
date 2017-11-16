@@ -1,6 +1,7 @@
 /* jshint esversion:6 */
 document.addEventListener('DOMContentLoaded', function () {
-	var FOOTER = document.getElementsByTagName('footer')[0],
+	var CONTAINER = document.getElementById('container'),
+		FOOTER = document.getElementsByTagName('footer')[0],
 		BOARD = document.getElementById('board'),
 		INPUT_PLAYER_RED = document.getElementById('input-player-red'),
 		INPUT_PLAYER_BLUE = document.getElementById('input-player-blue'),
@@ -49,10 +50,11 @@ document.addEventListener('DOMContentLoaded', function () {
 			var winner = game.players.filter(function (p) {
 				return results[p] > 0;
 			});
-			FOOTER.innerHTML = winner.length < 1 ? 'Drawed game.' : winner[0] +' wins.';
 			record.results = results;
 			record.whenFinished = (new Date()).toISOString();
 			saveMatchRecord(record);
+			FOOTER.innerHTML = (winner.length < 1 ? "Drawed game." : winner[0] +" wins.") +
+				" Please start a new game.";
 		});
 		console.log("Starting match...");
 		match.run();
@@ -156,6 +158,8 @@ document.addEventListener('DOMContentLoaded', function () {
 					     })
 				]);
 				BTN_START_GAME.onclick = newMatch.bind(global);
+				CONTAINER.hidden = false;
+				FOOTER.innerHTML = 'Please input who is playing and start the game.';
 				console.log('Ready.');
 				resolve(global.UI);
 			}, function (err) {
@@ -174,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				window.USER = result.user.email;
 				return main();
 			} else { // User is not logged.
-				document.getElementById('board').innerHTML = "Please log in.";
+				FOOTER.innerHTML = "Checking user's login...";
 				var provider = new firebase.auth.GoogleAuthProvider(),
 					auth = firebase.auth();
 				auth.useDeviceLanguage();
