@@ -14,10 +14,24 @@
 		<h1>Colograph</h1>
 	</header>
 	<div id="container">
+		<div id="howtoplay">
+			<h3>How to play</h3>
+			<p>Players <span style="color:red;">Red</span> and <span style="color:blue;">Blue</span>
+			take turns painting the blank shapes. <span style="color:red;">Red</span> goes first.
+			Two shapes may be linked by a line. A line gets a colour when the shapes it connects are
+			both painted with this same colour.</p>
+			<p>Each coloured line that connects two identical shapes adds one point to the player's
+			score. Each coloured line that connects two different shapes subtracts one point from the
+			player's score. The game ends when all shapes have been coloured, and the player with
+			the highest score wins.</p>
+			<p>Player <span style="color:red;">Red</span> is: <input id="input-player-red"/>.</p>
+			<p>Player <span style="color:blue;">Blue</span> is: <input id="input-player-blue"/>.</p>
+			<p><button id="button-startgame">Start game</button></p>
+		</div>
 		<div id="board">
-			<p>Loading, please wait...</p>
 		</div>
 	</div>
-	<footer></footer>
+	<footer>Loading, please wait...</footer>
+
 	<script src="/js/app.js"></script>
 </body></html>

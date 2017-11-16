@@ -1,15 +1,25 @@
 /* jshint esversion:6 */
 document.addEventListener('DOMContentLoaded', function () {
-	var FOOTER = document.getElementsByTagName('footer')[0];
+	var FOOTER = document.getElementsByTagName('footer')[0],
+		BOARD = document.getElementById('board'),
+		INPUT_PLAYER_RED = document.getElementById('input-player-red'),
+		INPUT_PLAYER_BLUE = document.getElementById('input-player-blue'),
+		BTN_START_GAME = document.getElementById('button-startgame');
 
-	function newMatch(game) {
-		var playerRed, playerBlue;
+	function newMatch() {
+		var playerRed = INPUT_PLAYER_RED.value,
+			playerBlue = INPUT_PLAYER_BLUE.value;
 		while (!playerRed) {
 			playerRed = prompt("Who will be the first player?");
 		}
+		INPUT_PLAYER_RED.value = playerRed;
 		while (!playerBlue) {
 			playerBlue = prompt("Who will be the second player?");
 		}
+		INPUT_PLAYER_BLUE.value = playerBlue;
+
+		var game = this.GAMES.shift(); // Cycle games.
+		this.GAMES.push(game);
 
 		var match = this.MATCH = new this.ludorum.Match(game.clone(), [
 			new this.ludorum.players.UserInterfacePlayer(playerRed),
@@ -84,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					constructor: function ColographHTMLInterface() {
 						BasicHTMLInterface.call(this, {
 							document: document,
-							container: document.getElementById('board')
+							container: BOARD
 						});
 					},
 
@@ -102,10 +112,52 @@ document.addEventListener('DOMContentLoaded', function () {
 					}
 				});
 				global.UI = new ColographHTMLInterface();
-				global.GAME = ludorum_game_colograph.Colograph.randomGame({
-					nodeCount: 9, edgeCount: 20
-				});
-				resolve(newMatch.call(global, global.GAME));
+				global.GAMES = base.Randomness.DEFAULT.shuffle([
+					new ludorum_game_colograph.Colograph({ // Balanced
+					          edges: [
+					               [1,4,5], [2,5],   [6,3],      [6,7],
+					               [5,8],   [10],    [7,9],      [11],
+					               [9,12],  [12,13], [11,14,15], [15],
+					               [13],    [14],    [15],       []
+					          ],
+					          shapes: ['circle','circle','circle','circle','circle',
+								'square','square','circle','circle','square','square',
+								'circle','circle','circle','circle','circle'],
+					          scoreSameShape: +1,
+					          scoreDifferentShape: -1
+					     }),
+					new ludorum_game_colograph.Colograph({ // Very biased for blue.
+					          edges: [
+					               [1,4,5], [2,5],   [6,3],      [6,7],
+					               [5,8],   [9,10],    [7,9,11],      [11],
+					               [9,12],  [10,12,13], [11,14], [],
+					               [13],    [],    []
+					          ],
+					          shapes: ['circle','circle','circle','circle','circle',
+								'square','square','circle','circle','square','square',
+								'circle','circle','circle','circle','circle'],
+					          scoreSameShape: +1,
+					          scoreDifferentShape: -1
+					     }),
+					new ludorum_game_colograph.Colograph({ // Biased for red.
+					          edges:[
+					               [9],[6],[3,9],[7],
+								[5,8,10],[6,9,12],[8,11],[11],
+								[9,12,14],[13],[11,13,14],[14],
+								[],[],[],
+					          ],
+					          shapes: ['circle','square','circle','circle',
+								 'square','circle','circle','circle',
+								 'square','square','square','square',
+								 'square','square','square'
+							],
+					          scoreSameShape: +1,
+					          scoreDifferentShape: -1
+					     })
+				]);
+				BTN_START_GAME.onclick = newMatch.bind(global);
+				console.log('Ready.');
+				resolve(global.UI);
 			}, function (err) {
 				console.error(err);
 				reject(err);
@@ -131,10 +183,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 		}).catch(function(err) {
 			console.log(err);
-			document.getElementById('board').innerHTML = "User authentication failed!";
+			FOOTER.innerHTML = "User authentication failed!";
 		});
 	} catch (err) {
 		console.error(err);
-		document.getElementById('board').innerHTML = "Application initialization failed!";
+		FOOTER.innerHTML = "Application initialization failed!";
 	}
 }); // 'DOMContentLoaded'
