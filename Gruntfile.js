@@ -15,7 +15,6 @@ module.exports = function (grunt) {
 						dest: FB_APP_PATH +'public/js/creatartis-base.js' },
 					{ src: 'node_modules/sermat/build/sermat-umd-min.js', nonull: true,
 						dest: FB_APP_PATH +'public/js/sermat.js' },
-
 					{ src: 'node_modules/ludorum/build/ludorum.min.js', nonull: true,
 						dest: FB_APP_PATH +'public/js/ludorum.js' },
 					{ src: 'build/ludorum-game-colograph.min.js', nonull: true,
